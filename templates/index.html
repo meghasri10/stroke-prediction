@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Stroke Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="navbar">
+    <h2>🏥 MedCare Stroke Prediction System</h2>
+</div>
+
+<div class="dashboard">
+    <div class="card">
+        <h3>Patient Details</h3>
+
+        <form action="/predict" method="POST">
+            <input type="number" name="age" placeholder="Age" required>
+            <input type="number" name="hypertension" placeholder="Hypertension (0/1)" required>
+            <input type="number" name="heart_disease" placeholder="Heart Disease (0/1)" required>
+            <input type="number" name="glucose" placeholder="Glucose Level" required>
+            <input type="number" name="bmi" placeholder="BMI" required>
+            <input type="number" name="smoking_status" placeholder="Smoking (0-3)" required>
+
+            <button type="submit">Analyze Risk</button>
+        </form>
+
+        {% if prediction_text %}
+            <div class="result">
+                <h3>{{ prediction_text }}</h3>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>

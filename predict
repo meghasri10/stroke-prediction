@@ -1,0 +1,39 @@
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        age = float(request.form['age'])
+        hypertension = float(request.form['hypertension'])
+        heart_disease = float(request.form['heart_disease'])
+        glucose = float(request.form['avg_glucose_level'])
+        bmi = float(request.form['bmi'])
+
+        smoking_map = {
+            "never smoked": 0,
+            "formerly smoked": 1,
+            "smokes": 2,
+            "Unknown": 3
+        }
+
+        smoking_status = smoking_map.get(request.form['smoking_status'], 0)
+
+        input_data = [[age, hypertension, heart_disease,
+                       glucose, bmi, smoking_status]]
+
+        prediction = model.predict(final_input)[0]
+probability = model.predict_proba(final_input)[0][1] * 100
+
+        if prediction == 1:
+            result = "⚠ High Risk of Stroke"
+        else:
+            result = "✅ Low Risk of Stroke"
+
+        return render_template(
+            'index.html',
+            prediction_text=result
+        )
+
+    except Exception as e:
+        return render_template(
+            'index.html',
+            prediction_text=f"Error: {str(e)}"
+        )
