@@ -1,50 +1,84 @@
-from flask import redirect, url_for
 from flask import Flask, render_template, request
-import joblib
+import pickle
 import numpy as np
+import sqlite3
 
 app = Flask(__name__)
 
-# Load trained model
-model = joblib.load("stroke_model.pkl")
+# Load model
+model = pickle.load(open("stroke_model.pkl", "rb"))
 
-@app.route('/')
+# Create database
+def init_db():
+    conn = sqlite3.connect("history.db")
+    c = conn.cursor()
+    c.execute('''CREATE TABLE IF NOT EXISTS predictions (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    age REAL,
+                    hypertension REAL,
+                    heart_disease REAL,
+                    glucose REAL,
+                    bmi REAL,
+                    smoking_status REAL,
+                    prediction TEXT
+                )''')
+    conn.commit()
+    conn.close()
+init_db()
+
+
+@app.route("/")
 def home():
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-@app.route('/predict', methods=['POST'])
+@app.route("/predict", methods=["POST"])
 def predict():
-    try:
-        age = float(request.form.get('age', 0))
-        hypertension = float(request.form['hypertension'])
-        heart_disease = float(request.form['heart_disease'])
-        glucose = float(request.form.get('glucose', 0))
-        bmi = float(request.form.get('bmi', 0))
-        smoking_map = {
-            "never smoked": 0,
-            "formerly smoked": 1,
-            "smokes": 2,
-            "Unknown": 3
-        }
+    # 1. Get form data
+    age = float(request.form["age"])
+    hypertension = int(request.form["hypertension"])
+    heart_disease = int(request.form["heart_disease"])
+    glucose = float(request.form["avg_glucose_level"])
+    bmi = float(request.form["bmi"])
+    smoking = int(request.form["smoking_status"])
 
-        smoking_status = smoking_map.get(request.form['smoking_status'], 0)
+    # 2. Prepare data for model
+    input_data = np.array([[age, hypertension, heart_disease, glucose, bmi, smoking]])
+    print("Input data:", input_data)
 
-        final_input = np.array([[age, hypertension, heart_disease,
-                                 glucose, bmi, smoking_status]])
+    # 3. Make prediction
+    prediction = model.predict(input_data)[0]
+    prob = model.predict_proba(input_data)[0][1]
 
-        prediction = model.predict(final_input)[0]
+    print("Prediction:", prediction)
+    print("Probability:", prob)
 
-        if prediction == 1:
-            result_text = "⚠ High risk of stroke!"
-        else:
-            result_text = "✅ Low risk of stroke."
+    # 4. Decide result
+    result = "High Risk" if prediction == 1 else "Low Risk"
 
-        return render_template('index.html', prediction_text=result_text)
+    # 5. Save to database
+    conn = sqlite3.connect("history.db")
+    c = conn.cursor()
+    c.execute("""
+           INSERT INTO predictions 
+           (age, hypertension, heart_disease, glucose, bmi, smoking_status, prediction)
+           VALUES (?, ?, ?, ?, ?, ?, ?)
+       """, (age, hypertension, heart_disease, glucose, bmi, smoking, result))
+    conn.commit()
+    conn.close()
 
-    except Exception as e:
-        return render_template('index.html',
-                               prediction_text=f"⚠ Error: {str(e)}")
+    # 6. Return result
+    return render_template("result.html", result=result, probability=round(prob * 100, 2))
+
+
+@app.route("/dashboard")
+def dashboard():
+    conn = sqlite3.connect("history.db")
+    c = conn.cursor()
+    c.execute("SELECT * FROM predictions")
+    data = c.fetchall()
+    conn.close()
+    return render_template("dashboard.html", data=data)
 
 
 if __name__ == "__main__":

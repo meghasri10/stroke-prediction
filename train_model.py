@@ -5,6 +5,7 @@ import pickle
 
 # Load dataset
 df = pd.read_csv("stroke_data.csv")
+print(df['stroke'].value_counts())
 
 # Convert smoking_status to numbers
 smoking_map = {
@@ -17,9 +18,7 @@ smoking_map = {
 df['smoking_status'] = df['smoking_status'].map(smoking_map)
 
 # Select features
-X = df[['age', 'hypertension', 'heart_disease',
-        'avg_glucose_level', 'bmi', 'smoking_status']]
-
+X = df[['age','hypertension','heart_disease','avg_glucose_level','bmi','smoking_status']]
 y = df['stroke']
 
 # Split
@@ -27,7 +26,13 @@ X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42)
 
 # Train model
-model = RandomForestClassifier(n_estimators=100, random_state=42)
+from sklearn.ensemble import RandomForestClassifier
+
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42,
+    class_weight='balanced'
+)
 model.fit(X_train, y_train)
 
 # Accuracy

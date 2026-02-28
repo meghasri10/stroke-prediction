@@ -2,10 +2,68 @@
 <html>
 <head>
     <title>Prediction Result</title>
+    <style>
+        body {
+            font-family: Poppins;
+            background: linear-gradient(135deg, #8e0e00, #1f1c18);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255,0,0,0.3);
+        }
+
+        .high {
+            color: #ff4d4d;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .low {
+            color: #66ff99;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #ff4b2b;
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            background: #ff1e00;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Prediction Result</h1>
-    <p>The model predicts: <strong>{{ prediction }}</strong></p>
-    <a href="/">Go back</a>
+
+<div class="card">
+    <h2>❤️ CardioAI Prediction Result</h2>
+
+    <p class="{{ 'high' if result == 'High Risk' else 'low' }}">
+        {{ result }}
+    </p>
+
+    <p>Stroke Probability: {{ probability }}%</p>
+
+    <a href="/">🔄 Try Again</a>
+</div>
+
 </body>
 </html>

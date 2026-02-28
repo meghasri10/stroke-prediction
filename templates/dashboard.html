@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CardioAI Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #8e0e00, #1f1c18);
+            color: white;
+            text-align: center;
+        }
+
+        h1 {
+            padding: 20px;
+        }
+
+        .chart-container {
+            width: 80%;
+            margin: 30px auto;
+            background: rgba(255,255,255,0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        canvas {
+            margin-top: 20px;
+        }
+
+        .back-btn {
+            margin: 20px;
+            padding: 10px 20px;
+            background: #ff4d4d;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: #cc0000;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>❤️ CardioAI Analytics Dashboard</h1>
+
+<div class="chart-container">
+    <h3>Hypertension Distribution</h3>
+    <canvas id="barChart"></canvas>
+</div>
+
+<div class="chart-container">
+    <h3>Stroke Risk Overview</h3>
+    <canvas id="pieChart"></canvas>
+</div>
+
+<a href="/">
+    <button class="back-btn">Back to Predictor</button>
+</a>
+
+<script>
+    // Bar Chart
+    const barCtx = document.getElementById('barChart');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['No Hypertension', 'Hypertension'],
+            datasets: [{
+                label: 'Patients',
+                data: [12, 8],  // You can change these numbers
+                backgroundColor: ['#ff6666', '#990000']
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 2000
+            }
+        }
+    });
+
+    // Pie Chart
+    const pieCtx = document.getElementById('pieChart');
+    new Chart(pieCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Low Risk', 'High Risk'],
+            datasets: [{
+                data: [15, 5],
+                backgroundColor: ['#ff9999', '#660000']
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                animateScale: true,
+                duration: 2000
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

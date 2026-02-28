@@ -1,0 +1,7 @@
+Age,Hypertension,HeartDisease,Glucose,BMI,Smoking,Result
+95.0,1,1,200.0,38.0,2,Low Risk of Stroke
+95.0,1,1,200.0,38.0,2,Low Risk of Stroke
+90.0,1,1,300.0,42.0,2,Low Risk of Stroke
+90.0,0,0,300.0,38.0,2,High Risk of Stroke
+90.0,1,1,200.0,38.0,2,High Risk of Stroke
+90.0,1,1,200.0,38.0,2,High Risk of Stroke

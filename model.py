@@ -15,7 +15,8 @@ df = pd.DataFrame(data)
 X = df[["age", "heart_rate", "blood_pressure"]]
 y = df["stroke"]
 
-model = RandomForestClassifier()
+model = RandomForestClassifier(class_weight='balanced', random_state=42)
+
 model.fit(X, y)
 
 # Save model
